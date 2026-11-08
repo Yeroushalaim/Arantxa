@@ -1,0 +1,23 @@
+name: Déploiement automatique sur OVH
+
+on:
+  push:
+    branches:
+      - main  # Déclenche le déploiement à chaque 'git push' sur la branche main
+
+jobs:
+  web-deploy:
+    name: Transfert des fichiers
+    runs-on: ubuntu-latest
+    steps:
+    - name: Récupérer le code du dépôt
+      uses: actions/checkout@v4
+
+    - name: Synchroniser les fichiers via FTP
+      uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+      with:
+        server: ftp.cluster129.hosting.ovh.net # 👈 REMPLACEZ par votre serveur FTP OVH
+        username: arantxh                      # 👈 REMPLACEZ par votre login FTP OVH
+        password: ${{ secrets.FTP_PASSWORD }}  # 👈 Laissez tel quel (récupère le secret GitHub)
+        local-dir: ./                          # Envoie tout le contenu du dépôt
+        server-dir: ./www/                     # Dossier cible chez OVH (ne pas modifier)
